@@ -4,20 +4,13 @@ import asyncio
 import json
 import datetime
 import logging
-
-def config_logs(log_config):
-    FORMAT='%(levelname)s|%(funcName)s: %(message)s [%(created)f]'
-    logging.basicConfig(filename='example.log',
-                        encoding='utf-8')
-    print('completed')
+import logging.config
 
 def load_file(file_path):
     with open(file_path) as config_file:
         config = json.load(config_file)
         return config
 
-config_logs(load_file('../resources/config/logs.json'))
-logger = logging.getLogger();
 async def set_blocked_services(services, adguard):
     response = await adguard.request(uri='blocked_services/set',
                           method='POST',
@@ -31,13 +24,10 @@ async def set_blocked_websites(websites, adguard):
     return response
 
 async def main():
-    '''Show example how to get status of your AdGuard Home instance.'''
     secrets = load_file('../resources/secrets/server_config.json')
     times = load_file('../resources/config/times.json')
-    blocked_services = load_file('../resources/rules/blocked_services.json')
-    blocked_websites = load_file('../resources/rules/blocked_websites.json')
-    log_config = load_file('../resources/config/logs.json')
-    config_logs(log_config)
+    blocked_services = load_file('../resources/config/blocked_services.json')
+    blocked_websites = load_file('../resources/config/blocked_websites.json')
     logger.debug("debug")
     async with AdGuardHome(host=secrets['host'],
                            port=secrets['port'],
@@ -56,4 +46,8 @@ async def main():
             print('Time to get a new watch')
 
 if __name__ == "__main__":
+    logger_config = load_file('../resources/config/logger_config.json')
+    logging.config.dictConfig(logger_config)
+    logger = logging.getLogger();
+    logger.info(f"Loaded the following logger config: {logger_config}") 
     asyncio.run(main())

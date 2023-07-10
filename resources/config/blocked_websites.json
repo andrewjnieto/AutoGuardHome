@@ -1,0 +1,10 @@
+{
+    "rules": [
+        "||gamepass.com^",
+        "||nytimes.com^",
+        "||ycombinator.com^",
+        "||pitchfork.com^",
+        "||newyorker.com^",
+        "||algolia.com^"
+    ]
+}
